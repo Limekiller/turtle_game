@@ -22,6 +22,34 @@ public class SelectBox : MonoBehaviour {
 
 		 if (Input.GetMouseButtonDown(0)) {
      		start_box = Input.mousePosition;
+
+			RaycastHit hit;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			if (Physics.Raycast(ray, out hit)) {
+				if (hit.transform.tag == "Selectable") {
+					if (!Input.GetKey(KeyCode.LeftShift)) {
+						GameObject[] csel = GameObject.FindGameObjectsWithTag("Selectable");
+						for (int i = 0; i < csel.Length; i++) {
+							rend = csel[i].GetComponent<Renderer>();
+							rend.material.SetFloat("_Outline", 0.0f);
+						}
+					}
+					rend = hit.transform.gameObject.GetComponent<Renderer>();
+					if (rend.material.GetFloat("_Outline") == 0.0f) {
+						rend.material.SetFloat("_Outline", 0.006f);	
+					} else {
+						if (Input.GetKey(KeyCode.LeftShift)) {
+							rend.material.SetFloat("_Outline", 0.00f);
+						}
+					}
+				} else {
+					GameObject[] csel = GameObject.FindGameObjectsWithTag("Selectable");
+					for (int i = 0; i < csel.Length; i++) {
+						rend = csel[i].GetComponent<Renderer>();
+						rend.material.SetFloat("_Outline", 0.0f);
+					}
+				}
+			}
  		}
 
 		 if(Input.GetMouseButtonUp(0)) {
@@ -34,10 +62,8 @@ public class SelectBox : MonoBehaviour {
 				rend = csel[i].GetComponent<Renderer>();
                 //If the object falls inside the box set its state to selected so we can use it later
                 if(boundbox.Contains(objectlocation)) {
-					   rend.material.SetFloat("_Outline", 0.03f);
-                } else {
-					rend.material.SetFloat("_Outline", 0f);
-				}
+					   rend.material.SetFloat("_Outline", 0.006f);
+                }
             }
 			start_box = new Vector3();
 			end_box = new Vector3();
